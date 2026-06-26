@@ -350,6 +350,322 @@
             <button type="button" class="toggle-switch-btn" :class="discountType === 'fixed' ? 'active' : ''" @click="discountType = 'fixed'">円値引き (固定額)</button>
         </div>
         <label class="admin-label">② 値引き額／値引き率の入力 (一括設定)</label>
+        <div        body, .page-image {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        .swiper { width: 100%; height: calc(100vh - 140px); height: calc(100dvh - 140px); transition: height 0.2s ease; }
+        
+        .swiper-slide { 
+            overflow: hidden !important; 
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        
+        .zoom-wrapper {
+            width: 100%;
+            height: auto;
+            position: relative;
+            overflow: hidden; 
+            flex-shrink: 0;
+            box-sizing: border-box;
+            padding: 0 15px;
+            transition: all 0.3s ease;
+        }
+
+        .inline-maximize-btn {
+            position: absolute;
+            top: 10px;
+            left: 25px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            padding: 6px 10px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .inline-maximize-btn:active { background: rgba(0, 0, 0, 0.9); }
+
+        .fullscreen-image-overlay {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            z-index: 9000;
+            background: #ffffff;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .fullscreen-image-overlay img {
+            width: 100% !important;
+            height: auto !important;
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .page-container { 
+            width: 100%; 
+            display: flex; flex-direction: column; align-items: center; 
+            background: #fff; 
+            padding-bottom: 40px; 
+            overflow-y: auto; 
+            height: 100%;
+            -webkit-overflow-scrolling: touch; 
+            box-sizing: border-box;
+        }
+        
+        .swiper-zoom-container { width: 100%; height: 100%; }
+        .page-image { width: 100%; height: auto; display: block; border: none; }
+
+        .selection-area { 
+            width: 90%; 
+            display: flex; flex-direction: column; 
+            padding: 10px; background: #f9f9f9; border-radius: 8px; margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            box-sizing: border-box;
+            flex-shrink: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .settings-wrap { flex-shrink: 0; display: flex; flex-direction: column; width: 100%; }
+
+        .toggle-btn-container { display: flex; justify-content: flex-end; gap: 6px; margin-bottom: 8px; flex-shrink: 0; flex-wrap: wrap; }
+        .toggle-file-btn {
+            font-size: 11px; padding: 5px 10px; background: #e0e0e0; 
+            border: 1px solid #aaa; border-radius: 4px; cursor: pointer; color: #333;
+            font-weight: bold;
+        }
+        .toggle-file-btn:active { background: #ccc; }
+
+        .file-upload-group { margin-bottom: 10px; padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 4px; flex-shrink: 0; }
+        .file-upload-item { display: flex; flex-direction: column; font-size: 13px; font-weight: bold; margin-bottom: 8px; }
+        
+        .file-input-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; border: 1px solid transparent; border-radius: 4px; padding: 2px; }
+        .file-input-row input[type="file"] { flex: 1; }
+        .reset-data-btn {
+            font-size: 11px; padding: 4px 8px; background: #ffebee; 
+            border: 1px solid #ffcdd2; border-radius: 4px; cursor: pointer; color: #c62828;
+            font-weight: bold; white-space: nowrap;
+        }
+        .reset-data-btn:active { background: #ffcdd2; }
+
+        .selection-row { display: flex; gap: 10px; margin-bottom: 5px; width: 100%; flex-shrink: 0; }
+        .select-box { 
+            flex: 1; 
+            min-width: 0; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            box-sizing: border-box;
+            text-overflow: ellipsis;  white-space: nowrap; 
+            overflow: hidden; 
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .blink-attention { animation: blink-red 1.2s ease-in-out; animation-iteration-count: 3; }
+        /* 遅めの無限点滅クラスを新設 */
+        .blink-attention-slow { animation: blink-red 2.0s ease-in-out infinite; }
+        
+        @keyframes blink-red {
+            0%, 100% { border-color: #ccc; box-shadow: none; }
+            50% { border-color: #ff0000; box-shadow: 0 0 8px rgba(255, 0, 0, 0.6); }
+        }
+
+        .result-box { border: 1px solid #ccc; background: #fff; padding: 10px; border-radius: 4px; font-size: 14px; margin-bottom: 10px; flex-shrink: 0; }
+        .scrollable-menu-area { width: 100%; padding-right: 5px; }
+        .tap-menu-area { width: 100%; margin-top: 10px; }
+        .tap-menu-title { font-size: 14px; font-weight: bold; margin-bottom: 5px; border-bottom: 2px solid #ccc; }
+        
+        .tap-btn { 
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; padding: 8px 10px; margin-bottom: 6px; 
+            background: #e0f7fa; border: 1px solid #00bcd4; border-radius: 6px; 
+            text-align: left; font-size: 13px; font-weight: bold; color: #006064;
+            cursor: pointer; box-sizing: border-box;
+        }
+        .tap-btn:active { background: #b2ebf2; }
+        .tap-btn-left { display: flex; flex-direction: row; align-items: baseline; gap: 8px; flex: 1; flex-wrap: wrap; }
+        .tap-btn-spec { font-size: 11px; font-weight: normal; color: #00838f; margin-top: 0; }
+
+        .tap-btn-side { background: #fff3e0; border: 1px solid #ffb74d; color: #e65100; }
+        .tap-btn-side:active { background: #ffe0b2; }
+        .tap-btn-side .tap-btn-spec { color: #d84315; }
+
+        .bottom-cart-area {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 3px solid #333; z-index: 1000;
+            box-sizing: border-box; padding: 4px 0 env(safe-area-inset-bottom) 0; margin: 0;
+            transition: bottom 0.2s ease, opacity 0.2s ease;
+        }
+        .bottom-cart-area.fullscreen-adjusted { padding-bottom: 25px !important; }
+        
+        .cart-table-wrapper { width: 100%; max-height: 45vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .cart-table { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0; }
+        .cart-table th, .cart-table td { border: 1px solid #999; padding: 7px 6px; font-size: 13px; vertical-align: middle; box-sizing: border-box; word-break: break-all; }
+        
+        .cart-col-name { width: 42%; text-align: left; }
+        .cart-col-discount { width: 18%; text-align: center; }
+        .cart-col-price { width: 40%; text-align: right; }
+        
+        .double-strike { text-decoration: line-through; -webkit-text-decoration-line: line-through; text-decoration-style: double; -webkit-text-decoration-style: double; color: #777; font-size: 11px; font-weight: normal; }
+        .car-info-row td { background: #f0f0f0; font-weight: bold; color: #333; position: relative; }
+        .total-row td { background: #ffe0b2; font-weight: bold; }
+        .total-row td:nth-child(1) { font-size: 11px; color: #e65100; text-align: left; font-weight: bold; }
+        .cart-row-item td { background: #fafafa; color: #333; }
+        .cart-row-item:active td { background: #ffebee !important; }
+
+        [x-cloak] { display: none !important; }
+
+        .dialog-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .dialog-box { background: #fff; padding: 25px 20px; border-radius: 12px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .dialog-title { font-size: 16px; font-weight: bold; margin-bottom: 20px; color: #333; }
+        .dialog-btn-group { display: flex; flex-direction: column; gap: 10px; }
+        .dialog-btn { padding: 12px; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; font-weight: bold; }
+        .btn-yes { background: #00bcd4; color: #fff; }
+        .btn-yes:active { background: #00acc1; }
+        .btn-no { background: #f5f5f5; color: #555; border: 1px solid #ccc; }
+        .btn-no:active { background: #e0e0e0; }
+
+        .pwd-input { width: 100%; padding: 10px; font-size: 18px; text-align: center; letter-spacing: 4px; border: 2px solid #ccc; border-radius: 6px; margin-bottom: 15px; box-sizing: border-box; }
+
+        .admin-page-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 5000; overflow-y: auto; padding: 20px; box-sizing: border-box; }
+        .admin-card { background: #f5f7fa; border: 1px solid #cfd8dc; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+        .admin-title { font-size: 18px; font-weight: bold; color: #37474f; margin-bottom: 15px; border-bottom: 2px solid #37474f; padding-bottom: 5px; }
+        .admin-label { font-size: 14px; font-weight: bold; color: #455a64; margin-bottom: 8px; display: block; }
+        
+        .toggle-switch-group { display: flex; border: 1px solid #b0bec5; border-radius: 6px; overflow: hidden; margin-bottom: 15px; }
+        .toggle-switch-btn { flex: 1; padding: 10px; font-size: 13px; font-weight: bold; background: #fff; color: #546e7a; border: none; cursor: pointer; text-align: center; }
+        .toggle-switch-btn.active { background: #37474f; color: #fff; }
+        
+        .admin-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .admin-input { padding: 10px; font-size: 16px; border: 1px solid #cfd8dc; border-radius: 4px; width: 120px; text-align: right; }
+        
+        .discount-list-container { max-height: 50vh; overflow-y: auto; border: 1px solid #cfd8dc; border-radius: 6px; background: #fff; margin-bottom: 10px; }
+        .discount-item-name { font-size: 14px; color: #37474f; font-weight: bold; flex: 1; margin-right: 10px; }
+        
+        .switch { position: relative; display: inline-block; width: 48px; height: 26px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cfd8dc; transition: .3s; border-radius: 26px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: #00bcd4; }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        .admin-save-btn { width: 100%; padding: 14px; background: #2e7d32; color: #fff; font-size: 16px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-bottom: 20px; }
+        .admin-save-btn:active { background: #1b5e20; }
+
+        .toast-guidance { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.85); color: #fff; padding: 12px 20px; border-radius: 50px; font-size: 13px; font-weight: bold; text-align: center; line-height: 1.4; z-index: 10000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); pointer-events: none; width: 85%; max-width: 320px; }
+
+        .floating-action-container { position: fixed; top: 15px; left: 15px; z-index: 10010; display: flex; flex-direction: column; gap: 8px; }
+        .floating-action-btn { color: #fff; padding: 8px 14px; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.4); white-space: nowrap; }
+        .btn-fullscreen-cancel { background: rgba(211, 47, 47, 0.95) !important; border: 1px solid #ffcdd2 !important; }
+
+        .inline-price-wrap { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+        .cart-item-flex-wrap { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* 初回起動時限定のパスワードロック画面用のスタイル */
+        .first-lock-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #1a1a1a; z-index: 99999; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
+            color: #fff; font-family: sans-serif;
+        }
+        .first-lock-box {
+            text-align: center; background: #2a2a2a; padding: 35px 25px;
+            border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            width: 85%; max-width: 300px;
+        }
+
+        @media (orientation: landscape) {
+            .swiper { height: 100vh !important; height: 100dvh !important; width: 100%; }
+            .page-container { flex-direction: row; align-items: stretch; padding-bottom: 0; overflow: hidden; }
+            .zoom-wrapper { width: 50% !important; height: calc(100vh - var(--cart-h, 75px)) !important; height: calc(100dvh - var(--cart-h, 75px)) !important; display: flex; align-items: center; justify-content: center; background: #fff; padding: 0 15px !important; }
+            .swiper-zoom-container { height: 100%; display: flex; align-items: center; justify-content: center; }
+            .page-image { width: 100% !important; height: 100% !important; object-fit: contain !important; }
+            .selection-area { width: 50% !important; height: calc(100vh - var(--cart-h, 75px)) !important; height: calc(100dvh - var(--cart-h, 75px)) !important; margin: 0 !important; border-radius: 0; overflow-y: auto; padding: 15px; box-shadow: none; border-left: 1px solid #ccc; }
+            .bottom-cart-area { left: 0 !important; bottom: 0 !important; position: fixed !important; margin: 0 !important; padding: 4px 0 env(safe-area-inset-bottom) 0 !important; width: 100% !important; height: auto !important; background: #fff; border-top: 3px solid #333; }
+            .bottom-cart-area.fullscreen-adjusted { padding-bottom: 14px !important; }
+            .cart-table-wrapper { max-height: 160px !important; height: auto !important; overflow-y: auto; padding-bottom: 14px !important; box-sizing: border-box; }
+            .cart-table tbody { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+            .car-info-row { grid-column: 1 / 3; display: table; width: 100%; table-layout: fixed; } 
+            .cart-table td { padding: 5px 6px !important; font-size: 11px !important; }
+            .cart-row-item { display: table; width: 100%; table-layout: fixed; box-sizing: border-box; }
+            .total-row { grid-column: 1 / 3; display: table; width: 100%; table-layout: fixed; } 
+            .admin-page-overlay { padding: 20px 10%; }
+            .toast-guidance { bottom: calc(var(--cart-h, 75px) + 20px); } 
+        }
+    </style>
+</head>
+<body x-data="carSelector">
+
+<div class="first-lock-overlay" x-show="!isAppUnlocked" x-cloak>
+    <div class="first-lock-box">
+        <h2 style="margin: 0 0 20px 0; font-size: 18px; letter-spacing: 1px;">アプリ起動認証</h2>
+        <input type="password" class="pwd-input" pattern="\d*" inputmode="numeric" placeholder="••••" x-model="firstInputPassword" @keydown.enter="verifyFirstPassword" style="margin-bottom: 20px; background: #fff; color: #000;">
+        <div class="dialog-btn-group">
+            <button class="dialog-btn btn-yes" @click="verifyFirstPassword" style="padding: 14px;">認証してログイン</button>
+        </div>
+    </div>
+</div>
+
+<div class="floating-action-container">
+    <button class="floating-action-btn btn-fullscreen-cancel" x-show="imageFullscreenMode" @click="disableImageFullscreen()" x-cloak>❌ 戻る</button>
+</div>
+
+<div id="fullscreenOverlay" class="fullscreen-image-overlay" x-show="imageFullscreenMode" x-cloak>
+    <img :src="fullscreenImageUrl" alt="Fullscreen Image">
+</div>
+
+<div class="toast-guidance" x-show="showGuidance" x-cloak>
+    各種設定ボタンより価格設定が出来ます🙆
+</div>
+
+<div class="dialog-overlay" x-show="showFullscreenConfirm" x-cloak>
+    <div class="dialog-box">
+        <div class="dialog-title">全画面で表示しますか？</div>
+        <div class="dialog-btn-group">
+            <button class="dialog-btn btn-yes" @click="requestFullscreenFromDialog">はい</button>
+            <button class="dialog-btn btn-no" @click="declineFullscreenFromDialog">いいえ</button>
+        </div>
+    </div>
+</div>
+
+<div class="dialog-overlay" x-show="showPasswordDialog" x-cloak @click="showPasswordDialog = false">
+    <div class="dialog-box" @click.stop>
+        <div class="dialog-title">管理者パスワード</div>
+        <input type="password" class="pwd-input" pattern="\d*" inputmode="numeric" placeholder="••••" x-model="inputPassword" @keydown.enter="verifyPassword">
+        <div class="dialog-btn-group">
+            <button class="dialog-btn btn-yes" @click="verifyPassword">認証</button>
+            <button class="dialog-btn btn-no" @click="showPasswordDialog = false">キャンセル</button>
+        </div>
+    </div>
+</div>
+
+<div class="admin-page-overlay" x-show="showAdminPage" x-cloak>
+    <div class="admin-title">11. 価格設定・値引管理システム</div>
+    
+    <div class="admin-card">
+        <label class="admin-label">① 値引方式の選択 (一括設定)</label>
+        <div class="toggle-switch-group">
+            <button type="button" class="toggle-switch-btn" :class="discountType === 'percent' ? 'active' : ''" @click="discountType = 'percent'">%値引き (百分率)</button>
+            <button type="button" class="toggle-switch-btn" :class="discountType === 'fixed' ? 'active' : ''" @click="discountType = 'fixed'">円値引き (固定額)</button>
+        </div>
+        <label class="admin-label">② 値引き額／値引き率の入力 (一括設定)</label>
         <div            border: 1px solid rgba(255, 255, 255, 0.6);
             padding: 6px 10px;
             font-size: 11px;
